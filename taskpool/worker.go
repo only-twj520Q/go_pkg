@@ -11,7 +11,11 @@ type worker struct {
 	pool *pool
 }
 
-func NewWorker() interface{} {
+func init() {
+	workerPool.New = newWorker
+}
+
+func newWorker() interface{} {
 	return &worker{}
 }
 
@@ -36,6 +40,8 @@ func (w *worker) run() {
 				return
 			}
 
+			w.pool.taskLock.Unlock()
+
 			func() {
 				defer func() {
 					if e := recover(); e != nil {
@@ -43,6 +49,8 @@ func (w *worker) run() {
 				}()
 				t.f()
 			}()
+
+			workerPool.Put(w)
 		}
 	}()
 }
