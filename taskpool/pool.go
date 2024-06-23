@@ -6,10 +6,10 @@ import (
 	"sync/atomic"
 )
 
-var taskPool sync.Pool
+var globalPool sync.Pool
 
 func init() {
-	taskPool.New = newTask
+	globalPool.New = newTask
 }
 
 type task struct {
@@ -48,7 +48,7 @@ func (p *pool) SetCap(cap int32) {
 }
 
 func (p *pool) CtxGo(ctx context.Context, f func()) {
-	t := taskPool.Get().(*task)
+	t := globalPool.Get().(*task)
 	t.ctx = ctx
 	t.f = f
 
