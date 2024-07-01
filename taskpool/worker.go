@@ -36,6 +36,7 @@ func (w *worker) run() {
 
 			if t == nil {
 				// 如果没有任务，则释放锁，退出
+				w.close()
 				w.pool.taskLock.Unlock()
 				return
 			}
@@ -53,4 +54,8 @@ func (w *worker) run() {
 			workerPool.Put(w)
 		}
 	}()
+}
+
+func (w *worker) close() {
+	w.pool.decWorkerCount()
 }

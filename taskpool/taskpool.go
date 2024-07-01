@@ -7,7 +7,7 @@ import (
 var defaultPool = new(pool)
 
 func init() {
-	defaultPool = NewPool("defaultPool", 100)
+	defaultPool = NewPool("defaultPool", 100, NewDefaultConfig())
 }
 
 func GoWithoutCtx(f func()) {
