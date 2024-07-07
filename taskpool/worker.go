@@ -38,6 +38,7 @@ func (w *worker) run() {
 				// 如果没有任务，则释放锁，退出
 				w.close()
 				w.pool.taskLock.Unlock()
+				w.Recycle()
 				return
 			}
 
@@ -51,11 +52,20 @@ func (w *worker) run() {
 				t.f()
 			}()
 
-			workerPool.Put(w)
+			t.Recycle()
 		}
 	}()
 }
 
 func (w *worker) close() {
 	w.pool.decWorkerCount()
+}
+
+func (w *worker) zero() {
+	w.pool = nil
+}
+
+func (w *worker) Recycle() {
+	w.zero()
+	workerPool.Put(w)
 }

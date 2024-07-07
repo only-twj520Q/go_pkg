@@ -18,6 +18,17 @@ type task struct {
 	next *task
 }
 
+func (t *task) zero() {
+	t.ctx = nil
+	t.f = nil
+	t.next = nil
+}
+
+func (t *task) Recycle() {
+	t.zero()
+	globalPool.Put(t)
+}
+
 func newTask() interface{} {
 	return &task{}
 }
@@ -70,6 +81,10 @@ func NewPool(name string, cap int32, config *Config) *pool {
 		cap:    cap,
 		config: config,
 	}
+}
+
+func (p *pool) Name() string {
+	return p.name
 }
 
 func (p *pool) SetCap(cap int32) {
