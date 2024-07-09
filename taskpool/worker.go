@@ -1,6 +1,8 @@
 package taskpool
 
 import (
+	"fmt"
+	"runtime/debug"
 	"sync"
 	"sync/atomic"
 )
@@ -47,6 +49,10 @@ func (w *worker) run() {
 			func() {
 				defer func() {
 					if e := recover(); e != nil {
+						err := fmt.Errorf("[work.go] panic in pool gorountine: %s: %v: %s", w.pool.name, e, debug.Stack())
+						if w.pool.panicHandler != nil {
+							w.pool.panicHandler(t.ctx, err)
+						}
 					}
 				}()
 				t.f()

@@ -50,6 +50,9 @@ type pool struct {
 
 	// 正在运行的 worker 数量
 	workerCount int32
+
+	// worker发生panic时的回调
+	panicHandler func(context.Context, interface{})
 }
 
 type Config struct {
@@ -138,4 +141,8 @@ func (p *pool) incWorkerCount() {
 
 func (p *pool) decWorkerCount() {
 	atomic.AddInt32(&p.workerCount, -1)
+}
+
+func (p *pool) SetPanicHandler(f func(context.Context, interface{})) {
+	p.panicHandler = f
 }

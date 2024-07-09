@@ -26,6 +26,10 @@ func SetCap(cap int32) {
 	defaultPool.SetCap(cap)
 }
 
+func SetPanicHandler(f func(context.Context, interface{})) {
+	defaultPool.SetPanicHandler(f)
+}
+
 func RegisterPool(p *pool) error {
 	_, loaded := poolMap.LoadOrStore(p.Name(), p)
 	if loaded {
